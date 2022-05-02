@@ -21,10 +21,13 @@ public:
     /* Destructor is called when thread is aborted (timeout), but
      * memory space is not freed util garbage collector collects. */
     void abort() {
-        state.store(State::DEAD);
-        /* It means the thread dies with locked or being about to lock.
+        State expected = State::LIVE;
+        /* It means the thread dies with locked. state == State::FREE
          * It should try to pick the next thread by modifying state (LIVE -> FREE). */
-        if (state.load() == State::FREE) unlock();
+        if (!state.compare_exchange_strong(expected, State::DEAD)) {
+            state.store(State::DEAD);
+            unlock();
+        }
     }
 
     /* After timeout, thread dies */
