@@ -9,9 +9,6 @@ all: $(TARGET)
 $(TARGET): $(OBJS)
 	$(CC) $(CXXFLAGS) $(OBJS) $(LDFLAGS) -o $(TARGET)
 
-run: $(TARGET)
-	./$(TARGET) 16 10
-
 clean:
 	rm -rf $(OBJS) $(TARGET)
 
